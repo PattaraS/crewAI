@@ -32,8 +32,9 @@ def wait_for_event_handlers(timeout: float = 5.0) -> None:
         except Exception:  # noqa: S110
             pass
 
-    crewai_event_bus._sync_executor.shutdown(wait=True)
-    crewai_event_bus._sync_executor = ThreadPoolExecutor(
-        max_workers=10,
-        thread_name_prefix="CrewAISyncHandler",
-    )
+    if getattr(crewai_event_bus, '_executor_initialized', False):
+        crewai_event_bus._sync_executor.shutdown(wait=True)
+        crewai_event_bus._sync_executor = ThreadPoolExecutor(
+            max_workers=10,
+            thread_name_prefix="CrewAISyncHandler",
+        )
