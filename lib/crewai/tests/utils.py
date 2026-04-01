@@ -32,7 +32,8 @@ def wait_for_event_handlers(timeout: float = 5.0) -> None:
         except Exception:  # noqa: S110
             pass
 
-    if getattr(crewai_event_bus, '_executor_initialized', False):
+    # Guard against lazy-initialized executor (may not exist if no events were emitted)
+    if getattr(crewai_event_bus, "_executor_initialized", False):
         crewai_event_bus._sync_executor.shutdown(wait=True)
         crewai_event_bus._sync_executor = ThreadPoolExecutor(
             max_workers=10,
